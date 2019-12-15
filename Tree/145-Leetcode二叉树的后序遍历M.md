@@ -1,0 +1,196 @@
+<https://leetcode-cn.com/problems/binary-tree-postorder-traversal/>
+
+给定一个二叉树，返回它的后序遍历。
+
+**进阶:**递归算法很简单，你可以通过迭代算法完成吗？
+
+```cpp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+```
+
+
+
+思路1：递归，简单明了。 时间O(n)，空间O(n)=>取决于树的结构，最坏情况存储整棵树
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if (root) {
+            postorderTraversal(root->left);
+            postorderTraversal(root->right);
+            vct.push_back(root->val);
+        }
+        return vct;
+    }
+private:
+    vector<int> vct;
+};
+```
+
+思路2：用一个栈解决，先插入两次根节点，每次循环删掉栈顶一个节点，若此时栈顶和被删节点相同，则插入两次右节点，两次左节点，若不相同直接保存到vector中即可。 时间O(n)，空间O(n)
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> vct;
+        if (root) {
+            stack<TreeNode*> stk;
+            stk.push(root);
+            stk.push(root);
+            while (!stk.empty()) {
+                TreeNode* tmp =  stk.top();
+                stk.pop();
+                if (!stk.empty() && tmp == stk.top()) {
+                    if (tmp->right) {
+                        stk.push(tmp->right);
+                        stk.push(tmp->right);
+                    }
+                    if (tmp->left) {
+                        stk.push(tmp->left);
+                        stk.push(tmp->left);
+
+                    }
+                } else {
+                    vct.push_back(tmp->val);
+                }
+            }
+        }
+        return vct;
+    }
+};
+```
+
+思路3：思路2中需要连续插入两个节点，空间有点浪费，此思路可以减少空间浪费。不停的往左子树走，然后直到为NULL。与前中序遍历不同的是，这里不应直接把节点pop并且加入到vector中，然后转到右子树。这里应该判断一下当前根节点的右子树是否为空或者是否是从右子树回到的根节点。
+
+如何判断呢？当从左子树到根节点的时候，我把根节点加入到set中，我们就可以判断当前节点在不在set中，如果在的话就表示是从右子树回来的，这是pop掉并加入vector中即可。 时间O(n)，空间O(n)
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> vct;
+        stack<TreeNode*> stk;
+        unordered_set<TreeNode*> st;
+        TreeNode* cur = root;
+        while (cur || !stk.empty()) {
+            while (cur) {
+                stk.push(cur);
+                cur = cur->left;
+            }
+            if (stk.top()->right && !st.count(stk.top()->right)) {
+                cur = stk.top()->right;
+            } else {
+                vct.push_back(stk.top()->val);
+                st.insert(stk.top());
+                stk.pop();
+            }
+        }
+        return vct;
+    }
+};
+```
+
+思路4：思路3的改进版本，不用set也可以判断是否从右子树回来，用一个变量即可。 时间O(n)，空间O(n)
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> vct;
+        TreeNode* cur = root;
+        TreeNode* last = nullptr;
+        stack<TreeNode*> stk;
+        while (cur || !stk.empty()) {
+            while (cur) {
+                stk.push(cur);
+                cur = cur->left;
+            } 
+            if (stk.top()->right && stk.top()->right != last) {
+                cur = stk.top()->right;
+            } else {
+                vct.push_back(stk.top()->val);
+                last = stk.top();
+                stk.pop();
+            }
+        }
+        return vct;
+    }
+};
+```
+
+思路5：莫里斯遍历。 时间O(n)，空间O(n)=>取决于树的结构，最坏情况存储整棵树，全连到右子树。
+我们知道，二叉树遍历时左子树最后遍历的节点一定是一个叶子节点，其左右孩子都是NULL，将其右孩子指向当前根节点存起来，这样就可以回到根节点了。
+步骤如下：
+
+1. cur->left不为NULL，找到cur->left这颗子树最右边的节点记做last
+     - last->right为NULL，那么将last->right=cur，更新cur=cur->left
+     - last->right不为NULL，说明之前已经访问过，第二次来到这里(此时已经遍历完cur的left，然后遍历cur的right)更新cur=cur->right(此时cur指向本节点的父亲节点)
+2. cur->left为NULL，更新cur=cur->right
+
+以上是正常遍历的思路，后序遍历时只需在第二次访问某个节点的时候，我们只需要将以它的左节点为起点，一直向右走的整个节点逆序放入vector中即可，但是需要注意的是最后还要将根节点一直往右的一整条节点也逆序放入vector即可。
+
+```cpp
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> vct;
+        TreeNode* cur = root;
+        while (cur) {
+            if (cur->left) {
+                TreeNode* pre = cur->left;
+                while (pre->right && pre->right != cur) {
+                    pre = pre->right;
+                }
+                if (pre->right) {
+                    vct.push_back(cur->val);
+                    pre->right = nullptr;
+                    cur = cur->right;
+                } else {
+                    pre->right = cur;
+                    cur = cur->left;
+                }
+            } else {
+                vct.push_back(cur->val);
+                cur = cur->right;
+            }
+        }
+        return vct;
+    }
+};
+```
+
+思路6：后序遍历的顺序是左 -> 右 -> 根；前序遍历的顺序是根 -> 左 -> 右，左右其实是等价的，所以根 -> 右 -> 左逆序，就是左 -> 右 -> 根。所以直接将前序遍历的代码中的左右对换，遍历结果就是根->右->左，然后逆置就成左右根。 时间复杂度和空间复杂度由前序遍历方式决定。
+
+利用此思路我们可以将前序遍历的4种方法都进行左右对调，然后整体逆序。这里只列举一种，其他的同理。
+
+```cpp
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> vct;
+        stack<TreeNode*> stk;
+        TreeNode* cur = root;
+        while (!stk.empty() || cur) {
+            while (cur) {
+                vct.push_back(cur->val);
+                stk.push(cur);
+                cur = cur->right;
+            }
+            cur = stk.top()->left;
+            stk.pop();
+        }
+        reverse(vct.begin(), vct.end());
+        return vct;
+    }
+};
+```
