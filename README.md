@@ -56,6 +56,14 @@
 
 [94-Leetcode二叉树的中序遍历](https://github.com/Ranjiahao/OJ/blob/master/Tree/94-Leetcode%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86M.md)
 
+[100-Leetcode相同的树](https://github.com/Ranjiahao/OJ/blob/master/Tree/100-%E7%9B%B8%E5%90%8C%E7%9A%84%E6%A0%91E.md)
+
+[104-Leetcode二叉树的最大深度](https://github.com/Ranjiahao/OJ/blob/master/Tree/104-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%A4%A7%E6%B7%B1%E5%BA%A6E.md)
+
 [144-Leetcode二叉树的前序遍历](https://github.com/Ranjiahao/OJ/blob/master/Tree/144-Leetcode%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86M.md)
 
 [145-Leetcode二叉树的后序遍历](https://github.com/Ranjiahao/OJ/blob/master/Tree/145-Leetcode%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86M.md)
+
+[226-Leetcode翻转二叉树](https://github.com/Ranjiahao/OJ/blob/master/Tree/226-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91E.md)
+
+[965-Leetcode单值二叉树*](https://github.com/Ranjiahao/OJ/blob/master/Tree/965-%E5%8D%95%E5%80%BC%E4%BA%8C%E5%8F%89%E6%A0%91E.md)
